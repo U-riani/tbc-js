@@ -7,7 +7,7 @@
 :root {
   --paddingX-mobile: 20px;
   --paddingY-mobile: 20px;
-  --paddingX-pc: 60px;
+  --paddingX-pc: 13%;
   --paddingY-pc: 60px;
   --tbc-color: rgba(0, 163, 224);
 }
@@ -40,6 +40,10 @@ header {
   height: 70px;
   overflow: hidden;
   background-color: rgba(26, 30, 31);
+}
+
+.nav-menu-pc {
+  display: none;
 }
 
 .header-button-container {
@@ -518,6 +522,56 @@ footer {
 }
 
 @media (min-width: 990px) {
+  header {
+    padding: 20px var(--paddingX-pc);
+    display: flex;
+    align-items: center;
+    /* height: 150px; */
+  }
+
+  .header-open-menu-container {
+    display: none;
+  }
+
+  .nav-menu-pc {
+    display: block;
+    width: 50%;
+  }
+
+  .header-nav-pc {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .header-nav-pc ul{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-nav-pc ul li {
+    color: aliceblue;
+    list-style-type: none;
+    font-size: 1.3em;
+    /* font-size: ; */
+  }
+
+  .section-1-title {
+    padding: 0 var(--paddingX-pc);
+  }
+
+  .section-1-container-2 {
+    padding: var(--paddingY-pc) var(--paddingX-pc);
+  }
+
+  .section-2 {
+    padding: var(--paddingY-pc) var(--paddingX-pc);
+  }
+
+  .section-3 {
+    padding: var(--paddingY-pc) var(--paddingX-pc);
+  }
+
   .courses-container {
     display: grid;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
@@ -529,6 +583,7 @@ footer {
     align-items: center;
     width: 80%;
     height: 70%;
+
   }
 
   .carousel-images-container img {
@@ -547,8 +602,7 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    padding-left: var(--paddingX-pc);
-    padding-right: var(--paddingX-pc);
+
     z-index: 1000;
   }
 
@@ -563,6 +617,50 @@ footer {
     font-size: 100px;
     font-weight: 100;
     color: rgba(213, 213, 213, 0.611);
+  }
+
+  .section-4 {
+    padding: var(--paddingY-pc) var(--paddingX-pc);
+  }
+
+  .section-4-title {
+    grid-area: 1 / 1 / 2 / 2 ;
+  }
+
+  .section-4-title h2 {
+    height: 100%;
+    width: 100%;
+  }
+
+  .section-4-button {
+    grid-area: 1 / 2 / 2 /3;
+    margin: 0;
+  }
+
+  .footer-container {
+    padding: var(--paddingY-pc) var(--paddingX-pc);
+    display: grid;
+    grid-template: 1fr 1fr /1fr 1fr;
+  }
+
+  .footer-button-icons {
+    grid-area: 1 / 2 / 3 / 3;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    gap: 20%;
+    align-items: self-end;
+  }
+
+  .footer-button {
+    order: 2;
+  }
+
+  .footer-icons {
+    justify-content: flex-end;
+    width: 100%;
+    gap: 20px;
   }
 }
 
