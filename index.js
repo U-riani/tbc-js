@@ -1,9 +1,11 @@
 "use strict";
 
 class App {
+  // variables for stikcy navigation
   prevScrollY = window.scrollY;
   isSticky = false;
 
+  // variables for carousel
   carouselContainer = document.querySelector(".carousel-container");
   allSlides = document.querySelectorAll(".carousel-items");
   slide1 = document.querySelector(".carousel-page-1");
@@ -14,6 +16,9 @@ class App {
   currentSlide = 0;
   maxSlide = this.allSlides.length - 1;
 
+  intervalId = this.myInterval(this.carouselSelfMove);
+
+  // variables for questions section
   questions = document.querySelector(".questions-container");
   answersButton = document.querySelector(".questions-container");
   answers = document.querySelectorAll(".answer-container");
@@ -21,11 +26,11 @@ class App {
   constructor() {
     this.openMenu();
     this.stickyHeader();
-    // this.carouselMove();
-    this.carouselMove2();
+    this.carouselMove();
     this.openAnswer();
   }
 
+  // open navigation menu for mobile
   openMenu() {
     document.querySelector("header").addEventListener("click", (e) => {
       if (
@@ -47,6 +52,7 @@ class App {
     });
   }
 
+  // show navigation when scroll up
   stickyHeader() {
     window.addEventListener("scroll", () => {
       const currentScrollY = window.scrollY;
@@ -63,201 +69,124 @@ class App {
     });
   }
 
-  //try 2
+  carouselMove() {
+    // store interval
+    this.intervalId = this.myInterval(this.carouselSelfMove);
 
-  carouselMove2() {
-    this.carouselMoveWithDots();
-    this.carouselMoveWithArrow();
-    setInterval(() => {
-      this.carouselSelfMove2();
-    }, 1000);
-  }
-
-  carouselMoveWithDots() {
-    console.log(this.currentSlide, "dot");
+    // use event pagination and closest method to have only one event listener for arrows and dots
     this.carouselContainer.addEventListener("click", (e) => {
-      if (e.target.closest(".dot")) {
-        this.currentSlide >= 3 ? (this.currentSlide = 0) : this.currentSlide++;
-        this.currentSlide = e.target.closest(".dot").dataset.index - 1;
-        this.allSlides[this.currentSlide].style.transform = `translateX(0%)`;
-
-        this.allSlides.forEach((slide, i) => {
-          if (i === this.currentSlide) {
-            slide.style.transform = `translateX(0%)`;
-            slide.style.visibility = `visible`;
-          } else {
-            slide.style.transform = `translateX(${100 * 1}%)`;
-            this.activeCarouseDots();
-          }
-        });
-        console.log(this.currentSlide, "dot");
-      }
+      this.carouselMoveWithDots(e);
+      this.carouselMoveWithArrow(e);
     });
   }
 
-  carouselMoveWithArrow() {
-    this.carouselContainer.addEventListener("click", (e) => {
-      if (e.target.closest(".arrow-left")) {
-        this.currentSlide - 1 < 0
-          ? (this.currentSlide = 2)
-          : this.currentSlide--;
-        this.allSlides.forEach((el, i, arr) => {
-          if (i - this.currentSlide != 0) {
-            el.style.visibility = "hidden";
-          } else {
-            el.style.visibility = "visible";
-            el.style.transition = "transform 0.6s ease";
-          }
-          el.style.transform = `translateX(${100 * (i - this.currentSlide)}%)`;
-        });
-        this.activeCarouseDots();
-      }
-      if (e.target.closest(".arrow-right")) {
-        this.currentSlide + 1 > 2
-          ? (this.currentSlide = 0)
-          : this.currentSlide++;
-        this.allSlides.forEach((el, i, arr) => {
-          if (i - this.currentSlide != 0) {
-            el.style.visibility = "hidden";
-          } else {
-            el.style.visibility = "visible";
-            el.style.transition = "transform 0.6s ease";
-          }
-          el.style.transform = `translateX(${100 * (i - this.currentSlide)}%)`;
-        });
-        this.activeCarouseDots();
-      }
-    });
+  myInterval(myFunc) {
+    return setInterval(myFunc, 2000);
   }
 
-  carouselSelfMove2() {
-    this.currentSlide > 2 ? (this.currentSlide = 0) : this.currentSlide++;
-    console.log(this.currentSlide, "self");
-    this.allSlides.forEach((el, i, arr) => {
+  carouselMoveWithDots(e) {
+    if (e.target.closest(".dot")) {
+      // clear interval to stop on selected slide
+      clearInterval(this.intervalId);
+
+      // update currentSlide value
+      this.currentSlide >= 3 ? (this.currentSlide = 0) : this.currentSlide++;
+      this.currentSlide = e.target.closest(".dot").dataset.index - 1;
+
+      // this.allSlides[this.currentSlide].style.transform = `translateX(0%)`;
+
+      // show selected slide and hide others
+      this.allSlides.forEach((slide, i) => {
+        if (i === this.currentSlide) {
+          slide.style.transform = `translateX(0%)`;
+          slide.style.visibility = `visible`;
+        } else {
+          slide.style.transform = `translateX(${100}%)`;
+          this.activeCarouselDots();
+        }
+      });
+
+      // run interval to strat from selected slide
+      this.intervalId = this.myInterval(this.carouselSelfMove);
+    }
+  }
+
+  carouselMoveWithArrow(e) {
+    // move to left
+    if (e.target.closest(".arrow-left")) {
+      this.currentSlide - 1 < 0 ? (this.currentSlide = 2) : this.currentSlide--;
+
+      this.helperCarouselMoveWithArrow();
+    }
+    // move to right
+    if (e.target.closest(".arrow-right")) {
+      this.currentSlide + 1 > 2 ? (this.currentSlide = 0) : this.currentSlide++;
+
+      this.helperCarouselMoveWithArrow();
+    }
+  }
+
+  // this function is for function carouselMoveWithArrow to not repeat yourself
+  helperCarouselMoveWithArrow() {
+    // clear interval to stop on selected slide
+    clearInterval(this.intervalId);
+    this.allSlides.forEach((el, i) => {
       if (i - this.currentSlide != 0) {
         el.style.visibility = "hidden";
       } else {
         el.style.visibility = "visible";
-        el.style.transition = "transform 0.6s ease";
       }
       el.style.transform = `translateX(${100 * (i - this.currentSlide)}%)`;
     });
+
+    this.activeCarouselDots();
+
+    // run interval to strat from selected slide
+    this.intervalId = this.myInterval(this.carouselSelfMove);
   }
 
-  activeCarouseDots() {
+  // this function is for interval to move slides automatically
+  carouselSelfMove = () => {
+    // define current slide
+    this.currentSlide == 2 ? (this.currentSlide = 0) : this.currentSlide++;
+
+    //
+    this.allSlides.forEach((el, i) => {
+      if (i - this.currentSlide != 0) {
+        el.style.visibility = "hidden";
+      } else {
+        el.style.visibility = "visible";
+
+        el.style.transform = `translateX(${100 * (i - this.currentSlide)}%)`;
+      }
+    });
+    this.activeCarouselDots();
+  };
+
+  // function for dots to follow active slide
+  activeCarouselDots() {
+    // remove active from all dots
     this.allDots.forEach((dot, i) => {
       if (i != this.currentSlide && dot.classList.contains("active")) {
         dot.classList.remove("active");
       }
 
+      // active dot for activeslide
       if (!dot.classList.contains("active")) {
         this.allDots[this.currentSlide].classList.add("active");
       }
     });
   }
 
-  // carouselMove() {
-  //   // when click dot move carousel
-  //   document
-  //   .querySelector(".carousel-container")
-  //   .addEventListener("click", (e) => {
-  //     console.log(e.target.closest(".arrow-right"));
-  //     // console.log(e.target.closest('.dot').dataset.index)
-  //       if (e.target.closest(".dot")) {
-  //         this.currentSlide = e.target.closest(".dot").dataset.index - 1;
-  //         this.allSlides[this.currentSlide].style.transform = `translateX(0%)`;
-
-  //         this.allSlides.forEach((slide, i) => {
-  //           if (i === this.currentSlide) {
-  //             slide.style.transform = `translateX(0%)`;
-  //             slide.style.visibility = `visible`;
-  //             console.log("fff");
-  //             this.carouselDots();
-  //           } else {
-  //             slide.style.transform = `translateX(${100 * 1}%)`;
-  //           }
-  //         });
-  //       }
-
-  //       if(e.target.closest(".arrow-right")) {
-  //         console.log('rrrr')
-  //         this.currentSlide++;
-  //         this.allSlides.forEach((slide, i) => {
-  //           if (i === this.currentSlide) {
-  //             slide.style.transform = `translateX(0%)`;
-  //             slide.style.visibility = `visible`;
-  //             console.log("fff");
-  //             this.carouselDots();
-  //           } else {
-  //             slide.style.transform = `translateX(${100 * 1}%)`;
-  //           }
-  //         });
-  //       }else{
-  //         return null
-  //       }
-
-  //     });
-  //   setInterval(() => {
-  //     this.carouselSelfMove();
-  //     if (this.currentSlide >= this.maxSlide) {
-  //       this.currentSlide = 0;
-  //       // this.slide1.style.transform = 'translateX(100%)'
-  //     } else {
-  //       this.currentSlide++;
-  //     }
-  //   }, 3000);
-  // }
-
-  // carouselDots() {
-  //   this.allDots.forEach((dot, i) => {
-  //     if (i != this.currentSlide && dot.classList.contains("active")) {
-  //       dot.classList.remove("active");
-  //     }
-
-  //     if (!dot.classList.contains("active")) {
-  //       this.allDots[this.currentSlide].classList.add("active");
-  //     }
-  //   });
-  // }
-
-  // carouselSelfMove() {
-  //   this.slide3.style.visibility = "hidden";
-  //   this.allSlides.forEach((s, i) => {
-  //     this.carouselDots();
-  //     if (this.currentSlide != i) {
-  //       s.style.visibility = "hidden";
-  //     } else {
-  //       s.style.visibility = "visible";
-  //     }
-  //   });
-
-  //   if (this.currentSlide === 0) {
-  //     this.slide1.style.transform = "translateX(0%)";
-  //     this.slide2.style.transform = "translateX(100%)";
-  //     this.slide3.style.transform = "translateX(-100%)";
-  //   }
-  //   if (this.currentSlide === 1) {
-  //     this.slide2.style.transform = "translateX(0%)";
-  //     this.slide1.style.transform = "translateX(-100%)";
-  //     this.slide3.style.transform = "translateX(100%)";
-  //   }
-  //   if (this.currentSlide === 2) {
-  //     this.slide3.style.transform = "translateX(0%)";
-  //     this.slide1.style.transform = "translateX(100%)";
-  //     this.slide2.style.transform = "translateX(-100%)";
-  //   }
-  // }
-
+  // function for questions/answers section
   openAnswer() {
     this.answersButton.addEventListener("click", (e) => {
       if (e.target.closest(".question-title-icon")) {
         const answerContainer = e.target
           .closest(".question")
           .querySelector(".answer-container");
-        console.log(answerContainer.getAttribute("data-answer-id"));
-        if (answerContainer) {
-          answerContainer.display = "block";
-        }
+
+        // make visible chosen answer and hide others
         this.answers.forEach((el, i) => {
           if (
             +answerContainer.getAttribute("data-answer-id") === i &&
@@ -268,7 +197,6 @@ class App {
             el.style.display = "none";
           }
         });
-        e.target.closest(".question").querySelector(".answer-container");
       }
     });
   }
