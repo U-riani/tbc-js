@@ -130,14 +130,8 @@ class App {
   helperCarouselMoveWithArrow() {
     // clear interval to stop on selected slide
     clearInterval(this.intervalId);
-    this.allSlides.forEach((el, i) => {
-      if (i - this.currentSlide != 0) {
-        el.style.visibility = "hidden";
-      } else {
-        el.style.visibility = "visible";
-      }
-      el.style.transform = `translateX(${100 * (i - this.currentSlide)}%)`;
-    });
+
+    this.helperHideVisibleSlides();
 
     this.activeCarouselDots();
 
@@ -150,7 +144,12 @@ class App {
     // define current slide
     this.currentSlide == 2 ? (this.currentSlide = 0) : this.currentSlide++;
 
-    //
+    this.helperHideVisibleSlides();
+    
+  };
+
+  // helper function: hide/make visible slides
+  helperHideVisibleSlides() {
     this.allSlides.forEach((el, i) => {
       if (i - this.currentSlide != 0) {
         el.style.visibility = "hidden";
@@ -161,7 +160,7 @@ class App {
       }
     });
     this.activeCarouselDots();
-  };
+  }
 
   // function for dots to follow active slide
   activeCarouselDots() {
